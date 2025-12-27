@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -34,14 +35,26 @@ func execCommand(input string) error {
 	input = strings.Trim(input, "\n")
 	args := strings.Split(input, " ")
 
-	// leadingArg := args[0]
+	leadingArg := args[0]
+	switch leadingArg {
+	case "cd":
+		if len(args) < 2 {
+			return errors.New("please add directory after `cd`")
+		}
 
-	cmd := exec.Command(args[0], args[1:]...)
+		return os.Chdir(args[1])
+	case "exit":
+		os.Exit(0)
+	default:
+		cmd := exec.Command(args[0], args[1:]...)
 
-	// Set the correct output device.
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
+		// Set the correct output device.
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
 
-	// Execute the command and return the error.
-	return cmd.Run()
+		// Execute the command and return the error.
+		return cmd.Run()
+	}
+
+	return nil
 }
