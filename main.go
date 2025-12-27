@@ -4,13 +4,24 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
 
+var fileName = ".go-shell-name"
+
 func main() {
+
+	file, err := OpenFile(fileName)
+	if err == nil {
+		log.Fatalf("error while opening file: %s", err)
+	}
+	defer CloseFile(file)
+
 	reader := bufio.NewReader(os.Stdin)
+
 	for {
 
 		cwd, err := os.Getwd()
